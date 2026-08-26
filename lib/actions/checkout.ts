@@ -1,4 +1,3 @@
-// Suggested location: lib/actions/checkout.ts
 'use server'
 
 import { redirect } from 'next/navigation'
@@ -7,8 +6,6 @@ import { createPaymentIntent, createPaymentMethod, attachPaymentMethod } from '@
 
 const ALLOWED_METHODS = ['gcash', 'grab_pay', 'paymaya']
 
-// Matches the `orders` row returned by the reserve_tickets() Postgres function.
-// Supabase can't infer this automatically for custom RPC functions.
 type OrderRow = {
    id: string
    event_id: string
@@ -38,7 +35,7 @@ export async function checkout(formData: FormData) {
 
    const supabase = await createClient()
 
-   //1: atomically hold the seats (reserve_tickets)
+   // Step 1: atomically hold the seats (reserve_tickets from earlier)
    const { data: order, error: reserveError } = await supabase
       .rpc('reserve_tickets', {
          p_ticket_type_id: ticketTypeId,
@@ -57,8 +54,8 @@ export async function checkout(formData: FormData) {
 
    const returnUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/${order.id}/return`
 
-   // redirect() throws internally to interrupt execution, it must
-   // NOT be called inside this try block, or the catch would treat a
+   // NOTE: redirect() throws internally to interrupt execution — it must
+   // NOT be called inside this try block, or our own catch would treat a
    // successful redirect as a failure and wrongly release the seat hold.
    let checkoutUrl: string | undefined
 
@@ -74,12 +71,14 @@ export async function checkout(formData: FormData) {
       checkoutUrl = attached.attributes.next_action?.redirect?.url
       if (!checkoutUrl) throw new Error('No redirect URL returned from PayMongo')
 
-      await supabase
-         .from('orders')
-         .update({ paymongo_payment_intent_id: intent.id, paymongo_checkout_url: checkoutUrl })
-         .eq('id', order.id)
+      const { error: linkError } = await supabase.rpc('set_order_payment_intent', {
+         p_order_id: order.id,
+         p_payment_intent_id: intent.id,
+         p_checkout_url: checkoutUrl,
+      })
+      if (linkError) throw linkError
    } catch (err) {
-      // PayMongo failed after we already held the seat, give it back.
+      // PayMongo failed after we already held the seat — give it back.
       await supabase.rpc('release_order_hold', { p_order_id: order.id })
       console.error('checkout failed:', err)
       redirect(`/events/${eventId}?error=payment_setup_failed`)
