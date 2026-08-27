@@ -29,7 +29,7 @@ export async function sendTicketEmail(tickets: Ticket[], ctx: EmailContext) {
       .map((_, i) => `<p>Ticket ${i + 1}<br/><img src="cid:ticket-qr-${i}" width="200" /></p>`)
       .join('')
 
-   await resend.emails.send({
+      const { data, error } = await resend.emails.send({
       from: 'Tickets <onboarding@resend.dev>', // swap once your domain is verified
       to: [ctx.customerEmail],
       subject: `Your ticket${tickets.length > 1 ? 's' : ''} for ${ctx.eventTitle}`,
@@ -42,4 +42,7 @@ export async function sendTicketEmail(tickets: Ticket[], ctx: EmailContext) {
       `,
       attachments,
    })
+
+   if (error) console.error('[tickets] resend send error:', error)
+   else console.log('[tickets] email sent, id:', data?.id)
 }

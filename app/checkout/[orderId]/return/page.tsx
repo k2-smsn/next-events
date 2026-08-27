@@ -5,11 +5,13 @@ export default async function ReturnPage({ params }: { params: Promise<{ orderId
    const { orderId } = await params
    const supabase = createAdminClient()
 
-   const { data: order } = await supabase
-      .from('orders')
-      .select('status, quantity, events(title)')
-      .eq('id', orderId)
-      .single()
+   const { data: order, error } = await supabase
+   .from('orders')
+   .select('status, quantity, events(title)')
+   .eq('id', orderId)
+   .single()
+
+   if (error) console.error('[return page] order fetch error:', error)
 
    if (!order) {
       return <div className="p-8 text-center">Order not found.</div>

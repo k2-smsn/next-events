@@ -38,16 +38,19 @@ export async function POST(req: NextRequest) {
          p_payment_intent_id: paymentIntentId,
       })
       console.log('[webhook] mark_order_paid_by_intent error:', error)
+      console.log('[webhook] tickets returned:', tickets)
 
       // Empty on a duplicate/retry delivery (order already processed) — the
       // guard inside mark_order_paid_by_intent already prevents that from
       // re-running, so this also naturally prevents a duplicate email.
       if (tickets && tickets.length > 0) {
-         const { data: orderInfo } = await supabaseAdmin
+        const { data: orderInfo, error: orderInfoError } = await supabaseAdmin
             .from('orders')
             .select('customer_email, customer_name, events(title, venue, event_date, event_time)')
             .eq('id', tickets[0].order_id)
             .single()
+
+         if (orderInfoError) console.error('[webhook] orderInfo fetch error:', orderInfoError)
 
          if (orderInfo?.events?.[0]) {
             const eventInfo = orderInfo.events[0]
