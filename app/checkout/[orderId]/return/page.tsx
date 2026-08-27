@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import QRCode from 'qrcode'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 export default async function ReturnPage({ params }: { params: Promise<{ orderId: string }> }) {
@@ -45,13 +46,47 @@ export default async function ReturnPage({ params }: { params: Promise<{ orderId
    }
 
    if (order.status === 'paid') {
+      const { data: tickets, error: ticketsError } = await supabase
+         .from('tickets')
+         .select('id, ticket_code')
+         .eq('order_id', orderId)
+         .order('created_at', { ascending: true })
+
+      if (ticketsError) console.error('[return page] ticket fetch error:', ticketsError)
+
+      const ticketQRCodes = await Promise.all(
+         (tickets ?? []).map(async (ticket) => ({
+            ...ticket,
+            qrCode: await QRCode.toDataURL(ticket.ticket_code, { width: 320, margin: 2 }),
+         })),
+      )
+
       return (
-         <main className="page-shell flex min-h-screen items-center justify-center">
+         <main className="page-shell flex min-h-screen items-center justify-center px-4 py-8">
             <div className="card w-full max-w-md p-7 text-center">
                <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-green-100 text-xl text-green-700">✓</div>
                <h1 className="mt-5 text-2xl font-bold">You&apos;re all set!</h1>
                <p className="mt-2 text-gray-500">
-                  We emailed your ticket{order.quantity > 1 ? 's' : ''} for {event?.title} to your inbox.
+                  Your ticket{order.quantity > 1 ? 's' : ''} for {event?.title} {ticketQRCodes.length ? 'are ready below.' : 'are being prepared.'}
+               </p>
+
+               {ticketQRCodes.length > 0 && (
+                  <div className="mt-6 space-y-5 border-t border-gray-200 pt-6">
+                     {ticketQRCodes.map((ticket, index) => (
+                        <div key={ticket.id}>
+                           <p className="mb-2 text-sm font-semibold">Ticket {index + 1}</p>
+                           <img
+                              src={ticket.qrCode}
+                              alt={`QR code for ticket ${index + 1}`}
+                              className="mx-auto h-64 w-64"
+                           />
+                        </div>
+                     ))}
+                  </div>
+               )}
+
+               <p className="mt-6 text-xs text-gray-500">
+                  For this demo, keep this page open and show the QR code at the door. The app also attempts to email your ticket when email delivery is configured.
                </p>
                <Link href="/" className="button button-secondary mt-6 inline-flex items-center justify-center">Back to events</Link>
             </div>
