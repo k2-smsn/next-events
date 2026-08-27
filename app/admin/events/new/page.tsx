@@ -1,5 +1,6 @@
 // Suggested location: app/admin/events/new/page.tsx
 import { createEvent } from '@/lib/actions/events'
+import SubmitButton from '@/app/components/ui/SubmitButton'
 
 export default async function NewEventPage({
    searchParams,
@@ -86,9 +87,9 @@ export default async function NewEventPage({
                </div>
             </div>
 
-            <button type="submit" className="w-full rounded bg-black px-4 py-2 text-sm font-medium text-white">
+            <SubmitButton pendingLabel="Creating..." className="w-full rounded bg-black px-4 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-60">
                Create Event (Draft)
-            </button>
+            </SubmitButton>
          </form>
       </div>
    )

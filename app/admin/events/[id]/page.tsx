@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { updateEvent, setEventStatus, addTicketType, deleteTicketType } from '@/lib/actions/events'
 import BackButton from '@/app/components/ui/BackButton'
 import ConfirmAction from '@/app/components/ui/ConfirmAction'
+import SubmitButton from '@/app/components/ui/SubmitButton'
 
 const NEXT_STATUS: Record<string, { label: string; value: string }[]> = {
    draft: [
@@ -123,7 +124,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
                   <label htmlFor="banner_image_url" className="text-sm font-bold">Banner Image URL</label>
                   <input id="banner_image_url" name="banner_image_url" defaultValue={event.banner_image_url ?? ''} className="w-full" />
                </div>
-               <button type="submit" className="button button-primary w-full sm:w-auto">Save Changes</button>
+               <SubmitButton pendingLabel="Saving..." className="button button-primary w-full sm:w-auto disabled:cursor-not-allowed disabled:opacity-60">Save Changes</SubmitButton>
             </form>
          </section>
 
@@ -163,7 +164,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
                <input name="name" placeholder="Ticket name" required />
                <input type="number" name="price" placeholder="Price" step="0.01" min="0" required />
                <input type="number" name="total_quantity" placeholder="Qty" min="1" required />
-               <button type="submit" className="button button-secondary">Add Ticket</button>
+               <SubmitButton pendingLabel="Adding..." className="button button-secondary disabled:cursor-not-allowed disabled:opacity-60">Add Ticket</SubmitButton>
             </form>
          </section>
       </main>

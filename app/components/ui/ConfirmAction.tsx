@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import SubmitButton from './SubmitButton'
 
 type ServerAction = (formData: FormData) => void | Promise<void>
 
@@ -73,9 +74,9 @@ export default function ConfirmAction({
                 Go Back
               </button>
               <form action={action}>
-                <button type="submit" className={destructive ? 'button button-danger' : 'button button-primary'}>
+                <SubmitButton pendingLabel="Working..." className={`${destructive ? 'button button-danger' : 'button button-primary'} disabled:cursor-not-allowed disabled:opacity-60`}>
                   {confirmLabel}
-                </button>
+                </SubmitButton>
               </form>
             </div>
           </div>

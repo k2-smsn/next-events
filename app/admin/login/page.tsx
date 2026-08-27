@@ -1,4 +1,5 @@
 import { signIn } from '@/lib/actions/auth'
+import SubmitButton from '@/app/components/ui/SubmitButton'
 
 export default async function LoginPage({
   searchParams,
@@ -32,7 +33,7 @@ export default async function LoginPage({
           <input id="password" name="password" type="password" required autoComplete="current-password" className="w-full" />
         </div>
 
-        <button type="submit" className="button button-primary w-full">Sign in</button>
+        <SubmitButton pendingLabel="Signing in..." className="button button-primary w-full disabled:cursor-not-allowed disabled:opacity-60">Sign in</SubmitButton>
       </form>
     </main>
   )

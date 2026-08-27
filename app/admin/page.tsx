@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { signOut } from '@/lib/actions/auth'
+import SubmitButton from '@/app/components/ui/SubmitButton'
 
 const STATUS_STYLES: Record<string, string> = {
    draft: 'bg-gray-100 text-gray-700',
@@ -25,9 +26,9 @@ export default async function AdminDashboardPage() {
                   + New Event
                </Link>
                <form action={signOut}>
-                  <button type="submit" className="rounded border px-3 py-2 text-sm">
+                  <SubmitButton pendingLabel="Signing out..." className="rounded border px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-60">
                      Sign out
-                  </button>
+                  </SubmitButton>
                </form>
             </div>
          </div>

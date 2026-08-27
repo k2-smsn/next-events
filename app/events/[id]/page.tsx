@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { checkout } from '@/lib/actions/checkout'
 import BackButton from '@/app/components/ui/BackButton'
+import SubmitButton from '@/app/components/ui/SubmitButton'
 
 const ERROR_MESSAGES: Record<string, string> = {
    sold_out: 'Sorry, not enough tickets left for that selection.',
@@ -106,7 +107,7 @@ export default async function EventPage({
                   </div>
                </fieldset>
 
-               <button type="submit" className="button button-primary w-full">Proceed to Payment</button>
+               <SubmitButton pendingLabel="Preparing payment..." className="button button-primary w-full disabled:cursor-not-allowed disabled:opacity-60">Proceed to Payment</SubmitButton>
             </form>
          ) : (
             <div className="card p-6 text-center">
