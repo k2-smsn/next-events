@@ -7,7 +7,7 @@ export default async function ReturnPage({ params }: { params: Promise<{ orderId
 
    const { data: order, error } = await supabase
    .from('orders')
-   .select('status, quantity, events(title)')
+   .select('status, quantity, event_id')
    .eq('id', orderId)
    .single()
 
@@ -17,10 +17,15 @@ export default async function ReturnPage({ params }: { params: Promise<{ orderId
       return <div className="p-8 text-center">Order not found.</div>
    }
 
+   const { data: event } = await supabase
+      .from('events')
+      .select('title')
+      .eq('id', order.event_id)
+      .single()
+
    if (order.status === 'pending') {
       return (
          <div className="p-8 text-center">
-            {/* Plain HTML polling — no client JS needed for something this simple */}
             <meta httpEquiv="refresh" content="3" />
             <h1 className="text-xl font-semibold">Confirming your payment…</h1>
             <p className="mt-2 text-gray-500">This page refreshes automatically. Please don't close this tab.</p>
@@ -33,7 +38,7 @@ export default async function ReturnPage({ params }: { params: Promise<{ orderId
          <div className="p-8 text-center">
             <h1 className="text-xl font-semibold">You're all set!</h1>
             <p className="mt-2 text-gray-500">
-               We emailed your ticket{order.quantity > 1 ? 's' : ''} for {order.events?.[0]?.title} to your inbox.
+               We emailed your ticket{order.quantity > 1 ? 's' : ''} for {event?.title} to your inbox.
             </p>
          </div>
       )
