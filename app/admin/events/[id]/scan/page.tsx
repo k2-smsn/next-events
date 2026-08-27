@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
-import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import TicketScanner from './TicketScanner'
+import BackButton from '@/app/components/ui/BackButton'
 
 export default async function TicketScannerPage({
    params,
@@ -20,24 +20,18 @@ export default async function TicketScannerPage({
    if (!event) notFound()
 
    return (
-      <main className="mx-auto max-w-2xl space-y-6 p-8">
-         <div className="flex items-center justify-between gap-4">
-            <div>
-               <Link
-                  href={`/admin/events/${event.id}`}
-                  className="text-sm text-gray-500 hover:underline"
-               >
-                  ← Back to event
-               </Link>
+      <main className="page-narrow">
+         <BackButton href={`/admin/events/${event.id}`}>Back to event</BackButton>
 
-               <h1 className="mt-2 text-2xl font-semibold">Scan Tickets</h1>
-               <p className="mt-1 text-sm text-gray-500">{event.title}</p>
-            </div>
+         <div className="mt-5 mb-6">
+            <p className="mb-1 text-sm font-semibold uppercase tracking-wider text-gray-500">Ticket validation</p>
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Scan Tickets</h1>
+            <p className="mt-2 text-gray-500">{event.title}</p>
          </div>
 
-         <div className="rounded border p-4">
-            <p className="text-sm text-gray-500">
-               Scan a customer's QR code to validate and redeem the ticket.
+         <div className="card mb-5 p-5">
+            <p className="text-sm leading-6 text-gray-600">
+               Point the camera at a customer&apos;s QR code to validate and redeem the ticket.
             </p>
          </div>
 

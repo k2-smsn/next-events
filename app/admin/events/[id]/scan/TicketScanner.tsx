@@ -108,7 +108,7 @@ export default function TicketScanner({ eventId }: Props) {
 
       if (result.ok) {
          return (
-            <div className="rounded-lg border border-green-300 bg-green-50 p-5">
+            <div className="rounded-2xl border border-green-200 bg-green-50 p-5 shadow-sm">
                <p className="text-lg font-semibold text-green-800">
                   ✓ Valid ticket
                </p>
@@ -146,7 +146,7 @@ export default function TicketScanner({ eventId }: Props) {
       }
 
       return (
-         <div className="rounded-lg border border-red-300 bg-red-50 p-5">
+         <div className="rounded-2xl border border-red-200 bg-red-50 p-5 shadow-sm">
             <p className="text-lg font-semibold text-red-800">
                ✕ {messages[result.reason] ?? 'Invalid ticket'}
             </p>
@@ -178,23 +178,23 @@ export default function TicketScanner({ eventId }: Props) {
       <div className="space-y-4">
          <div
             id="ticket-qr-reader"
-            className="overflow-hidden rounded-lg border bg-black"
+            className="scanner-frame overflow-hidden rounded-2xl border border-gray-800 bg-black"
          />
 
          {error && (
-            <div className="rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-800">
+            <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-800">
                {error}
             </div>
          )}
 
          {renderResult()}
 
-         <div className="flex gap-3">
+         <div className="flex flex-col gap-3 sm:flex-row">
             {!running && !result && (
                <button
                   type="button"
                   onClick={() => void startScanner()}
-                  className="rounded bg-black px-4 py-2 text-sm font-medium text-white"
+                  className="button button-primary w-full sm:w-auto"
                >
                   Start Scanner
                </button>
@@ -204,7 +204,7 @@ export default function TicketScanner({ eventId }: Props) {
                <button
                   type="button"
                   onClick={() => void stopScanner()}
-                  className="rounded border px-4 py-2 text-sm"
+                  className="button button-secondary w-full sm:w-auto"
                >
                   Stop Scanner
                </button>
@@ -214,7 +214,7 @@ export default function TicketScanner({ eventId }: Props) {
                <button
                   type="button"
                   onClick={scanAgain}
-                  className="rounded bg-black px-4 py-2 text-sm font-medium text-white"
+                  className="button button-primary w-full sm:w-auto"
                >
                   Scan Another Ticket
                </button>
