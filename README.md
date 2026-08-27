@@ -54,6 +54,17 @@ proxy.ts                  # Auth-aware middleware for /admin routes
 
 ## Getting Started
 
+### Demo access
+
+For the live demo or local testing, sign in at `/admin/login` with:
+
+```text
+Email: admin@demo.com
+Password: admin123
+```
+
+This account must exist in Supabase Authentication and have a matching `profiles` row with the `admin` role. These credentials are intentionally simple for demonstration only; change the password or remove this account before using the app for real events or payments.
+
 ### 1. Clone and install dependencies
 
 ```bash
@@ -74,7 +85,7 @@ npm install
    >
    > You'll also need to add Row Level Security (RLS) policies on each table appropriate to your access model (e.g. public read access to `published` events, admin-only writes) — none are included in the script.
 
-3. Create an admin user:
+3. Create an admin user, unless the demo account already exists:
    - In **Authentication → Users**, add a user with an email/password (this is who signs in at `/admin/login`).
    - Insert a matching row into `profiles` with that user's `id` and a `role` of `admin` (or `door_staff` for scan-only access).
 4. Collect your API credentials from **Project Settings → API**:
@@ -152,6 +163,8 @@ This app is a standard Next.js app and deploys well to [Vercel](https://vercel.c
 - Update `NEXT_PUBLIC_SITE_URL` to your production domain.
 - Point your PayMongo webhook at `https://<your-production-domain>/api/webhooks/paymongo`.
 - Switch PayMongo keys from test mode to live mode once you're ready to accept real payments.
+- For a demo deployment, use the Vercel URL as the production URL, keep PayMongo in test mode, and use the demo credentials above.
+- Do not use `admin@demo.com` / `admin123` for a real deployment. Create a private admin account with a strong password instead.
 
 ## Database Schema
 
