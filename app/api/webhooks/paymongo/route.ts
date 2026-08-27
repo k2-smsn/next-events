@@ -52,8 +52,8 @@ export async function POST(req: NextRequest) {
 
          if (orderInfoError) console.error('[webhook] orderInfo fetch error:', orderInfoError)
 
-         if (orderInfo?.events?.[0]) {
-            const eventInfo = orderInfo.events[0]
+         if (orderInfo?.events) {
+            const eventInfo = Array.isArray(orderInfo.events) ? orderInfo.events[0] : orderInfo.events
             await sendTicketEmail(tickets, {
                customerEmail: orderInfo.customer_email,
                customerName: orderInfo.customer_name,
