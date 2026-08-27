@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { updateEvent, setEventStatus, addTicketType, deleteTicketType } from '@/lib/actions/events'
 
@@ -24,8 +25,6 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
 
    const { data: ticketTypes } = await supabase.from('ticket_types').select('*').eq('event_id', id)
 
-   // Empty until the payment flow exists — the stats block is wired up now
-   // so it just starts working once orders get created.
    const { data: paidOrders } = await supabase
       .from('orders')
       .select('quantity, total_amount')
@@ -42,7 +41,17 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
       <div className="mx-auto max-w-2xl space-y-8 p-8">
          <div className="flex items-center justify-between">
             <h1 className="text-2xl font-semibold">{event.title}</h1>
+
             <div className="flex gap-2">
+               {event.status === 'published' && (
+                  <Link
+                     href={`/admin/events/${event.id}/scan`}
+                     className="rounded bg-black px-3 py-1.5 text-sm font-medium text-white"
+                  >
+                     Scan Tickets
+                  </Link>
+               )}
+
                {NEXT_STATUS[event.status]?.map((action) => (
                   <form key={action.value} action={setEventStatus.bind(null, id, event.status, action.value)}>
                      <button type="submit" className="rounded border px-3 py-1.5 text-sm">
